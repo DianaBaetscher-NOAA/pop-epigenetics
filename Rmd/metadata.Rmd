@@ -1,0 +1,99 @@
+---
+title: "metadata"
+author: "diana baetscher"
+date: "2025-04-14"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Read in existing metadata and organize
+
+Some samples have been extracted and have ABLG numbers, others do not and have no unique keys.
+
+
+```{r load-libraries}
+library(tidyverse)
+library(readxl)
+
+
+```
+
+```{r read-in-data}
+adult_coll <- read_xlsx("../data/POP_epigenetic_metadata/POPAdultCollections1719.xlsx")
+
+# are vial numbers unique?
+adult_coll %>%
+  filter(!is.na(AGE)) 
+
+# all of the samples with ages are from 2017 in this batch.
+```
+439 vials and 570 NA rows.
+
+```{r just-samples-w-ages}
+adult_coll %>%
+  filter(!is.na(AGE)) %>%
+  ggplot(aes(x = AGE)) +
+  geom_histogram(binwidth = 1)
+
+```
+
+Let's assume the 2019 sample ages are in other of the other data sheets:
+
+```{r additional-metadata}
+spec_2019 <- read_xlsx("../data/POP_epigenetic_metadata/MASELKO_GOA_2019_seastorm_pop specimen.xlsx")
+
+spec_2019 %>%
+  filter(!is.na(AGE)) %>% # 565 samples with AGE info
+  ggplot(aes(x = AGE)) +
+  geom_histogram(binwidth = 1)
+
+
+```
+
+```{r 2019-samples}
+# how many samples older than 30 yrs?
+spec_2019 %>%
+  filter(AGE > 40)
+
+```
+
+38 samples with ages > 30 yrs
+7 samples > 40 yrs
+
+```{r bin-samples-based-on-age}
+# set seed because of random sampling
+set.seed(549)
+
+age_selected <- spec_2019 %>%
+  filter(AGE < 40) %>%
+  mutate(age_grp = ifelse(AGE < 10, 1, NA)) %>%
+  mutate(age_grp = ifelse(AGE > 9 & AGE < 20, 10, age_grp)) %>%
+  mutate(age_grp = ifelse(AGE > 19 & AGE < 30, 20, age_grp)) %>%
+  mutate(age_grp = ifelse(AGE > 29 & AGE < 40, 30, age_grp)) %>%
+  group_by(age_grp) %>%
+  sample_n(22, replace = F)
+
+```
+
+```{r combine-old-and-age-sampled-fish}
+# just the oldest fish
+selected_sample <- spec_2019 %>%
+  filter(AGE > 39) %>% # plus the age-sampled fish
+  bind_rows(age_selected)
+
+# histogram of 96 samples
+selected_sample %>%
+  ggplot(aes(x = AGE)) +
+  geom_histogram(binwidth = 1)
+```
+
+```{r output-info-for-selected-samples}
+selected_sample %>%
+  write_csv("csv_outputs/POP_selected_epigenetic_samples_20250414.csv")
+
+```
+
