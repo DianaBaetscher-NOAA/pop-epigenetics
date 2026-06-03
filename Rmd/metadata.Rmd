@@ -44,7 +44,9 @@ adult_coll %>%
 Let's assume the 2019 sample ages are in other of the other data sheets:
 
 ```{r additional-metadata}
-spec_2019 <- read_xlsx("../data/POP_epigenetic_metadata/MASELKO_GOA_2019_seastorm_pop specimen.xlsx")
+spec_2019 <- read_xlsx("../data/POP_epigenetic_metadata/MASELKO_GOA_2019_seastorm_pop specimen.xlsx") %>%
+  mutate(CRUISE = as.character(CRUISE)) %>%
+  mutate(SPECIMENID = as.character(SPECIMENID))
 
 spec_2019 %>%
   filter(!is.na(AGE)) %>% # 565 samples with AGE info
@@ -96,4 +98,141 @@ selected_sample %>%
   write_csv("csv_outputs/POP_selected_epigenetic_samples_20250414.csv")
 
 ```
+
+
+
+######### READ IN THE SELECTED SAMPLES FROM CHARLES #############
+
+```{r}
+first_test <- read_csv("../data/POP_selected_DNA_sample_20250513.csv")
+
+first_test %>%
+  ggplot(aes(x = AGE)) +
+  geom_histogram(binwidth = 0.5)
+
+first_test %>%
+  filter(AGE > 5 & AGE < 10)
+```
+
+
+### Read in DNA plate 204 - POP samples for epigenetic aging ###
+
+```{r}
+plate <- read_xlsx("../data/DNA0204_Plate_Map_POP_20250415.xlsx")
+
+gel_info <- read_xlsx("../data/DNA0204_Plate_Map_POP_20250415.xlsx", sheet = "gel_scoring")
+
+# I did a quick re-evaluation and there were a handful of samples that I didn't agree with
+gel <- gel_info %>%
+  mutate(dsb = ifelse(is.na(dsb), `DNA Quality`, dsb))
+```
+
+Ok, given that it is pretty difficult to disentangle everything that Charles did, let me first look at the metadata associated with the 96 samples that he extracted. 
+
+Thanks to Katie's SOP about checking WGS DNA quality, I figured out the non-standard gel orientation.
+
+```{r read-in-pop-data-from-db}
+# another issue is that I don't think there were necessarily ABLG numbers attached to all of the metadata when the samples were extracted.
+
+db <- read_xlsx("../data/POP_epigenetic_metadata/20260127_export.xlsx")
+head(db)
+
+pop_db <- db %>%
+  filter(SpeciesNameOLD == "Sebastes alutus" | CommonNameOLD == "pacific ocean perch") %>%
+  left_join(., spec_2019, by = c("CruiseID" = "CRUISE", "AlternateID" = "SPECIMENID"))
+
+```
+
+
+
+```{r join-DNA-extraction-plate-to-metadata}
+plate_meta <- plate %>%
+  left_join(., pop_db, by = "ABLG") %>%
+  select(Well, ABLG, AlternateID, AgeYRS, SEX, ExtractedBy, ExtractionDate, ExtractionPlate, ExtractionWell, DNAngul, DNAquality, DepthM, CollectionYear, StartLatitudeDD, StartLongitudeDD) %>%
+  mutate(AgeYRS = as.numeric(AgeYRS))
+
+
+quality_dna <- plate_meta %>%
+  left_join(., gel, by = "Well") %>%
+  filter(!str_detect(dsb, "No HMW"))
+
+```
+The sex data can be identified later.
+
+
+```{r look-at-the-age-distribution}
+quality_dna %>%
+  ggplot(aes(x = AgeYRS)) +
+  geom_bar(stat = "count") +
+  scale_x_continuous(breaks = c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70))
+
+
+
+```
+
+1) include all samples >30 (13 total)
+2) include 10 samples between 0-10
+3) include 10 samples between 10-20
+4) include 10 samples between 20-30
+
+```{r select-samples}
+older_samples_to_send <- quality_dna %>%
+  filter(AgeYRS > 30)
+
+# select one sample from each sex and age
+young_samples <- quality_dna %>%
+    filter(AgeYRS < 6) %>%
+    filter(ABLG %in% c("47569", "793", "47574", "47577", "697"))
+
+# set seed because of random sampling
+set.seed(549)
+
+seqmatic_selected <- quality_dna %>%
+  filter(AgeYRS < 31) %>%
+  filter(AgeYRS > 5) %>% 
+  filter(SEX != 3) %>%
+  mutate(age_grp = ifelse(AgeYRS > 5 & AgeYRS < 13, 5, NA)) %>%
+  mutate(age_grp = ifelse(AgeYRS > 12 & AgeYRS < 20, 10, age_grp)) %>%
+  mutate(age_grp = ifelse(AgeYRS > 19 & AgeYRS < 31, 20, age_grp)) %>%
+  group_by(age_grp) %>%
+  sample_n(10, replace = F)
+
+samples_to_send <- seqmatic_selected %>%
+  bind_rows(older_samples_to_send) %>%
+  bind_rows(young_samples)  %>%
+  mutate(SEX = ifelse(SEX == 1, "male", SEX)) %>%
+  mutate(SEX = ifelse(SEX == 2, "female", SEX))
+
+
+samples_to_send %>%
+  ggplot(aes(x = AgeYRS, fill = SEX)) +
+  geom_bar(stat = "count") +
+  scale_x_continuous(breaks = c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70))
+
+```
+How many total males/females?
+
+```{r sex-sample-size}
+# that worked well!
+samples_to_send %>%
+  group_by(SEX) %>%
+  tally()
+
+```
+
+
+
+```{r}
+samples_to_send %>%
+  arrange(Well) %>%
+  filter(Well == ExtractionWell) %>%
+  ungroup() %>%
+  select(ExtractionPlate, ExtractionWell, ABLG, AgeYRS, DNAngul) %>%
+  write_csv("csv_outputs/POP_samples_for_seqmatic_20260420.csv")
+
+
+```
+
+
+
 
