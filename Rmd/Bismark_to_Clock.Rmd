@@ -1,0 +1,337 @@
+---
+title: "Bismark_to_Clock"
+output: github_document
+---
+
+Because of out-of-memory errors, the `methylation_bed_to_rdata.R` script was run in the `/home/nhowe/epi-pop/scripts/execute_bed-to-rdata.sh` script. That came before below
+
+ignore this first chunk
+```{r, echo=F, eval=F}
+# can't even do this because calling in files from share2
+# library(data.table)
+# getwd()
+# filenames <- list.files(path="/share2/nhowe/epi-pop/coverage/filtered/20X",
+#                 pattern = ".*R1.*100perc.*\\.bed$", full.names=TRUE)
+# 
+# if(length(filenames)==0){
+#   print("Not calling in any files. Quitting")
+# }
+# 
+# 
+# file_list <- list.files(pattern = "\\.bed$", full.names = TRUE)
+# 
+# # Read only columns 5 and 6 across all 48 files
+# col5_list <- lapply(file_list, function(f) fread(f, select = 5)[[1]])
+# col6_list <- lapply(file_list, function(f) fread(f, select = 6)[[1]])
+# 
+# # Convert to matrices (17M rows x 48 columns)
+# m5 <- do.call(cbind, col5_list)
+# m6 <- do.call(cbind, col6_list)
+# 
+# # Find loci where either column is zero across ALL 48 samples
+# keep_idx <- (rowSums(m5 != 0, na.rm = TRUE) > 0) & (rowSums(m6 != 0, na.rm = TRUE) > 0)
+# 
+# # Write out valid locus indices
+# valid_coords <- fread(file_list[1], select = 1:3)[keep_idx, ]
+# fwrite(valid_coords, "keep_loci.bed", sep = "\t", col.names = FALSE)
+
+```
+
+Below is following an rmd from emma strand for removing low variance CpG sites
+```{r}
+## clear environment 
+rm(list=ls())
+## unloading packages
+# invisible(lapply(paste0('package:', names(sessionInfo()$otherPkgs)), detach, character.only=TRUE,unload=TRUE))
+
+#install.packages("caret")
+#install.packages("plotrix")
+
+## load packages
+library(purrr)
+library(cli) ##dependency for following packages; load to get the correct version
+library(vctrs) ##dependency for following packages;  load to get the correct version
+library(plyr) ## for data transformation
+library(dplyr) ## for data transformation
+library(stringi)
+library(caret) #loads ggplot2 and lattice; needed for nearZeroVar() and findCorrelation()
+library(tidyverse) ## for data transformation
+library(plotrix)
+library(propagate)
+```
+
+```{r}
+
+## Load data 
+# load("./rdata/bedfiles-20x-100perc.RData")
+# df <- readRDS("rdata/bedfiles-20x-100perc.variant.rds")
+
+load("./rdata/bedfiles-20x-100perc.RData")
+head(df)
+
+df %>% distinct(scaffold)
+
+df %>% distinct(Loc) %>% nrow()
+
+### Basic stats
+mean(df$percent.meth)
+median(df$percent.meth)
+std.error(df$percent.meth)
+hist(df$percent.meth)
+```
+Shouldn't there be a second peak around methylation of 0?
+
+```{r testing-dataset, eval=F}
+# rows to keep for testing add based on 1596734
+1596734*3 # three samples
+
+# df <- df[c(1:4790202),]
+```
+
+Near Zero Variance removal...
+freqCut: the cutoff for the ratio of the most common value to the second most common value
+85/15 =85% of varaince is retained and 15% is removed 
+uniqueCut: the cutoff for the percentage of distinct values out of the number of total samples
+lowered from 50% to 10%, which may still be too high... might even just have to remove the older age individuals from this one.
+
+```{r}
+##### 1. Removing sites with low variance
+df_spread <- df %>%
+  filter(grepl("^NC", scaffold)) %>%  # Remove non-chr scaffolds
+  dplyr::select(ABLG, AGE, Loc, percent.meth) %>% 
+  tidyr::pivot_wider(names_from = Loc, values_from = percent.meth)
+df_spread[,1:6] |> arrange(AGE)
+
+# nh-added: round values to the nearest percent
+# added because all the output columns of nzv.cpg.list were around 0, so those values were not unique by 95.1 vs 95.2 vs 95.0 were... 
+df_round <- df_spread
+df_round[, -c(1:2)] <- round(df_round[, -c(1:2)])
+
+# near zero var
+nzv.cpg.list <- nearZeroVar(df_round, freqCut = 85/15, uniqueCut = 10, allowParallel = TRUE) 
+
+# view a few loci that are going to be axed
+df_spread[,c(1:2,nzv.cpg.list[1:100])] |> arrange(AGE)
+
+length(nzv.cpg.list) # 11850 is not particularly many sites, considering we're working with >1mil
+
+# remove near-zero variance loci
+df_spread_filteredDescr <- df_spread[, -nzv.cpg.list]
+# number of loci
+ncol(df_spread_filteredDescr) - 2
+
+# what is 3:643793? presumably the number of loci
+df_filtered1 <- df_spread_filteredDescr %>% 
+  pivot_longer(cols = 3:last_col(), 
+    names_to = "Loc", values_to = "percent.meth")
+  # gather("Loc", "percent.meth", 3:ncol(df_spread_filteredDescr))
+
+
+### for 100%, which i am doing above actually, just not using the 100 naming
+# df100_spread <- df100 %>% dplyr::select(ABLG, AGE, Loc, percent.meth) %>% spread(Loc, percent.meth)
+# nzv.cpg.list100 <- nearZeroVar(df100_spread, freqCut = 85/15, uniqueCut = 50, allowParallel = TRUE) 
+# df100_spread_filteredDescr <- df100_spread[, -nzv.cpg.list100]
+# 
+# df100_filtered1 <- df100_spread_filteredDescr %>% gather("Loc", "percent.meth", 3:106772)
+# 
+# length(unique(df100_filtered1$Loc))
+
+# emma strand values
+### Results for 68 samples round 1
+# 100% presence = 137,694 loci filtered to 130,904 loci (6,788 loci removed)
+# 90% presence = 755,564 loci filtered to 600,248 loci (155,314 loci removed)
+
+### Results for 140 samples round 2
+# 100% presence = 108,411 loci filtered to 106,770 loci (  loci removed)
+# 90% presence = 813,743 loci filtered to 643,791 loci (175,952 loci removed)
+```
+
+Something I am thinking of... instead of near-zero variance, what if it was finding differences in variance between age brackets? so not even a regression?  
+```{r}
+# should I incorporate this?
+age_bins <- c(0, 2, 5, 10, 20, 30, 40, 60)
+
+# 3. Create the new column
+df$age_bin <- cut(df$AGE, breaks = age_bins, right = FALSE)
+
+count(df, age_bin)
+```
+
+Don't yet have SNPs, hopefully soon... by end of day 9/22 maybe?
+
+```{r}
+##### 2. Removing potential SNPs 
+## currently based on BS Snper 
+## https://gatk.broadinstitute.org/hc/en-us/articles/360035531692-VCF-Variant-Call-Format
+
+# can't read from share drive here... has to be stored in home
+SNP_list <- read.delim2("/home/nhowe/epi-pop/BSSNP/bismarkBAMs_bssnp.vcf", header=FALSE, 
+                        col.names = c("chrom", "position", "ID", "REF", "ALT", "QUAL", "FILT", "SITE_INFO", "FORMAT", "SAMPLE_INFO")) %>%
+  unite(Loc, chrom, position, sep = " ", remove=F)
+
+df_filtered2 <- df_filtered1 %>% anti_join(SNP_list, by = "Loc")
+
+#Save as R data file / read in R data file for future running
+save(df_filtered2, file = "/home/nhowe/epi-pop/Rmd/rdata/seq2_df_filtered2.RData")
+
+length(unique(df_filtered2$Loc))
+
+### for 100%, which i am doing above actually, just not using the 100 naming
+# df100_filtered2 <- df100_filtered1 %>% anti_join(SNP_list, by = "Loc")
+# save(df100_filtered2, file = "/share2/nhowe/epi-pop/Rmd/rdata/seq2_df100_filtered2.RData")
+# length(unique(df100_filtered2$Loc))
+
+# emma strand values
+### Results for 68 samples round 1
+# 100% presence = 130,904 loci filtered to 130,843 loci
+# 90% presence = 600,248 loci filtered to 599,952 loci
+
+### Results for 140 samples round 2
+# 100% presence = 106,770 loci filtered to 106,718 loci
+# 90% presence = 643,791 loci filtered to 643,483 loci
+```
+
+Why only the bottom 10%?
+```{r}
+# snps are not ready
+df_filtered2 <- df_filtered1 # move on to next code chunk
+
+##### 3. Filtering out loci that are <10% in all samples 
+
+## Load data 
+# load("/home/nhowe/epi-pop/Rmd/rdata/seq2_df_filtered2.RData")
+
+df_filtered3 <- df_filtered2 %>% 
+  group_by(Loc) %>%
+  filter(any(percent.meth >= 10)) %>% #filter(!all(percent.meth < 10)) %>% 
+  ungroup()
+
+df_filtered3 %>% distinct(Loc) %>% nrow()
+
+# load("/home/nhowe/epi-pop/Rmd/rdata/seq2_df100_filtered2.RData")
+# df100_filtered3 <- df100_filtered2 %>% group_by(Loc) %>%
+#   filter(!all(percent.meth < 10)) %>% ungroup()
+# length(unique(df100_filtered3$Loc))
+
+# emma strand values
+### Results after taking out loci where all samples <10% for 68 samples round 1 
+# 100% presence = 130,843 loci filtered to 130,230 loci
+# 90% presence = 599,952 loci filtered to 599,320 loci
+
+### Results after taking out loci where all samples <10% for 140 samples round 2
+# 100% presence = 106,718 loci filtered to 106,342 loci
+# 90% presence = 643,483 loci filtered to 643,090 loci
+```
+
+Wouldn't this get the above code? Why are they run separately?
+
+```{r}
+##### 4. Filtering out loci that have a range of <10% change 
+df_filtered4 <- df_filtered3 %>% group_by(Loc) %>%
+  filter(max(percent.meth, na.rm = TRUE) - min(percent.meth, na.rm = TRUE) > 10) %>% 
+  ungroup()
+
+df_filtered4 %>% distinct(Loc) %>% nrow()
+
+# df100_filtered4 <- df100_filtered3 %>% group_by(Loc) %>%
+#   filter(max(percent.meth, na.rm = TRUE) - min(percent.meth, na.rm = TRUE) > 10) %>% ungroup()
+# length(unique(df100_filtered4$Loc))
+
+# emma strand values
+### Results for 68 samples round 1 
+# 100% presence = 130,230 loci filtered to 128,981 loci
+# 90% presence = 599,320 loci filtered to 598,064 loci
+
+### Results for 140 samples round 2
+# 100% presence = 106,342 loci filtered to 105,602 loci
+# 90% presence = 643,090 loci filtered to 642,346 loci
+```
+
+This removed the most, ~150k?
+
+```{r}
+##### 5. Removing sites that are highly correlated to each other
+df_filtered4_matrix <- df_filtered4 %>% 
+  ## replace NAs with mean value 
+  group_by(Loc) %>%
+  mutate(across(where(is.numeric), ~ ifelse(is.na(.), mean(., na.rm = TRUE), .))) %>% 
+  ungroup() %>%
+  ## create matrix  
+  dplyr::select(-AGE) %>%
+  spread(Loc, percent.meth) %>%
+  column_to_rownames(var = "ABLG")
+
+# save before moving working locations
+saveRDS(df_filtered4_matrix, "rdata/df_filtered4_matrix.rds")
+```
+
+```{r}
+correlation_matrix <- bigcor(df_filtered4_matrix, size = 1000)
+
+highlyCorDescr <- findCorrelation(df_filtered4_matrix, cutoff = 0.95, verbose=TRUE)  
+
+df_filtered4_spread <- df_filtered4 %>% spread(Loc, percent.meth) %>% 
+  column_to_rownames(var = "ABLG") %>% dplyr::select(-AgeRounded)
+
+df_filtered5 <- df_filtered4_spread[,-highlyCorDescr]
+df_filtered5 <- df_filtered5 %>% gather("Loc", "percent.meth", 1:11388) %>% dplyr::select(Loc) %>% distinct() %>%
+  left_join(., df_filtered4, by = "Loc")
+
+# df100_filtered4_matrix <- df100_filtered4 %>% spread(Loc, percent.meth) %>%
+#   column_to_rownames(var = "ABLG") %>% dplyr::select(-AgeRounded)
+# highlyCorDescr100 <- findCorrelation(df100_filtered4_matrix, cutoff = 0.95, exact = TRUE) 
+# df100_filtered4_spread <- df100_filtered4 %>% spread(Loc, percent.meth) %>% 
+#   column_to_rownames(var = "ABLG") %>% dplyr::select(-AgeRounded)
+# df100_filtered5 <- df100_filtered4_spread[,-highlyCorDescr100]
+# df100_filtered5 <- df100_filtered5 %>% gather("Loc", "percent.meth", 1:1260) %>% dplyr::select(Loc) %>% distinct() %>%
+#   left_join(., df100_filtered4, by = "Loc")
+
+# emma strand values
+### Results after taking out loci that are highly correlated with each other  
+# 100% presence = 128,981 loci filtered to  loci
+# 90% presence = 598,064 loci filtered to 11,388 loci
+```
+
+error for bigcor about dimensions :(
+
+```{r}
+# too large! gemini said to try this
+install.packages("hdf5r")
+library(hdf5r)
+
+res_h5 <- bigcor(
+  x,                  # Numeric matrix/data frame
+  y = NULL,           # Optional second matrix/data frame
+  fun = "cor",        # "cor" for correlation, "cov" for covariance
+  size = 2000,        # Block size for chunks
+  verbose = TRUE,     # Shows progress bar
+  file = "result.h5"  # Output path for the HDF5 file
+)
+
+# 1. Inspect dimensions
+res_h5$dim
+
+# 2. Extract specific rows/columns into a standard numeric matrix
+sub_matrix <- res_h5[1:500, 1:500]
+
+# 3. Extract all data into RAM (only if your RAM can handle it!)
+full_matrix <- res_h5[,]
+
+# 4. Close the file connection when finished
+res_h5$close_function()
+```
+
+```{r}
+## Export Rdata
+#Save as R data file / read in R data file for future running
+
+### df filtered 4 without removing highly correlated - feed into elastic net model
+### 90% present = 598,064 loci 
+### 100% present = 128,981 loci 
+save(df_filtered4, file = "../../home/nhowe/epi-pop/Rmd/rdata/seq2_df_filtered4.RData")
+# save(df100_filtered4, file = "../../home/nhowe/epi-pop/Rmd/rdata/seq2_df100_filtered4.RData")
+
+### df filtered 5 removing highly correlated - feed into GLM then elastic net model
+save(df_filtered5, file = "../../home/nhowe/epi-pop/df_filtered5.RData")
+# save(df100_filtered5, file = "../../home/nhowe/epi-pop/df100_filtered5.RData")
+```

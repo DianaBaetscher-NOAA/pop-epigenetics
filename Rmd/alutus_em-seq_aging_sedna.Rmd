@@ -303,7 +303,7 @@ module load aligners/bowtie2/2.5.4 bio/bismark/0.24.0
 bismark_genome_preparation ~/reference_genomes/sebastes_alutus/
 ```
 
-Step 2. Deduplicate
+### Step 2. Deduplicate
 
 ```{bash bismarkBAM_dedup.sh, eval=F}
 #SBATCH --job-name=methyldedup
@@ -351,10 +351,15 @@ Then I need to move then to share to make space and then I can rename the bamfil
 sed 's!.bam!_sorted.deduplicated.bam!g' epi-pop_seqmaticBAMs.txt > epi-pop_sort_dedup_bams_input.txt
 ```
 
+#### Calculate conversion efficiency
+This is without the spike-in!
+Supposedly EM-sequencing spike in is either (or both?) unmethylated Lambda DNA and CpG-methylated pUC19 DNA.
+I searched in the bam files for lambda and pUC19, but it doesn't seem like seqmatic added that to the ref genome.
+So that means I should probably do that myself.
+
 Now I can calculate the conversion efficiency with the deduplicated results.
 
-First create a function to deal with the clunky output
-
+First create a function to pull from the wordy splitting files
 ```{r}
 # function that takes values from appropriate rows in dedup splitting report
 methyl_conversion <- function(file_path) {
@@ -448,6 +453,7 @@ CTOB  –  complementary to original bottom strand
 
 So this should produce counts, bedGraph, cytosine report
 
+### Step 4: Merge CpG strands
 This is to output the merged CpG sites into a \*.cytosine_context_summary.txt file per sample. The original \*cov.gz file from the methylation command are not merged, and therefore each strand has it's own separate row.
 
 ```{bash bismarkBAM_cov2cyt.sh, eval=F}
@@ -490,12 +496,12 @@ coverage2cytosine \
 echo "-- coverage to cytosine conversion done for ${filename}: Check for failures in job outfile."
 ```
 
-### Step 3: Filtering sites
+### Step 4: Filtering sites
 
 I did not do the epidiverse nextflow pipeline for identifying and removing snps... is that something we would want to come back to?
-BSSnper instead? some notes below
+BSSnper instead? started running below
 
-#### 20x coverage filtering
+#### 4A: 20x coverage filtering
 
 ```{bash bismarkBAM_filter_coverage20x.sh, eval=F}
 #!/bin/bash
@@ -542,7 +548,7 @@ zcat "${sortedfile}" | awk -v thresh="${THRESHOLD}" -F'\t' 'BEGIN {OFS = FS} ($5
 echo "-- filtered sorted file by coverage for ${filename}: Check for failures in job outfile. Now move onto multiintersect bedtools to filter based on # of individuals with that locus."
 ```
 
-#### Number of samples with 20x
+#### 4B: Number of samples with 20x
 
 Keep sites with \>90% samples with 20x coverage, which I upped from the 80% used in Anastasia because they have more samples. Emma strand also uses 90%.
 
@@ -667,9 +673,108 @@ mkdir -p "/home/nhowe/epi-pop/Rmd/rdata"
 Rscript --vanilla /home/nhowe/epi-pop/Rmd/methylation_bed-to-rdata_args.R ${COVTHRESHOLD} ${INDPERC}
 ```
 
-I thought I was going to be able to easily import the rdata and work with it, but its massive.. might just stick with r scripts in sedna.
+Analyses continue in `Bismark_to_Clock.Rmd` but aren't developed just yet.
 
-#### SNP filtering 
+##### 4a-b: MethylKit Alternative
+
+```{bash, eval=F}
+#!/bin/bash
+
+#SBATCH --job-name=methylkit
+#SBATCH --time=2-16:00:00
+#SBATCH -c 1
+#SBATCH --mem=92GB
+#SBATCH --mail-type=FAIL,END
+#SBATCH --mail-user=natasha.howe@noaa.gov
+#SBATCH --output=/share2/nhowe/epi-pop/job_outfiles/cov-files-to-methylkit.%j.out
+#SBATCH --partition=standard,medmem
+
+module load R/4.6.1
+
+COVERAGE=20 # arg1: coverage threshold = $COVERAGE
+PERCIND=100 # arg2: percent of individuals = $PERCIND
+# not actually using nind arg yet
+
+mkdir -p "/home/nhowe/epi-pop/Rmd/rdata"
+
+Rscript --vanilla /home/nhowe/epi-pop/Rmd/cov-to-methylkit.R ${COVERAGE} ${PERCIND}
+```
+
+`cov-to-methylkit.R` contains the code:
+
+```{r cov-to-methylkit.R, eval=F}
+#!/bin/R
+
+args <- commandArgs(trailingOnly = TRUE)
+
+COV  <- args[1]
+PERC <- args[2]
+
+setwd("/home/nhowe/epi-pop/Rmd")
+
+# Loading libraries
+# BiocManager::install("methylKit")
+library(methylKit)
+library(readxl) ## read excel file
+library(plyr) ## needs to be loaded before dplyr
+library(tidyverse)
+library(janitor) # for clean_names()
+
+## Importing data
+# loading metadata
+metadata <- read_tsv("csv_outputs/POP_epigenetic_samples_metadata_AgeSex_20260729.tsv") %>%
+  dplyr::select(ABLG, SPECIMENID, AGE, SEX, LENGTH, WEIGHT) %>%
+  mutate(ABLG = as.character(ABLG))
+
+file_list <- list.files(path="/share2/nhowe/epi-pop/coverage",
+                pattern = "*deduplicated.sorted.CpG_report.merged_CpG_evidence.cov.gz$", full.names=TRUE)
+
+sample_ids <- unlist(file_list) %>% basename() %>% str_split_i("_", 1)
+
+# Pass numeric continuous ages into treatment
+samples <- metadata %>%
+  filter(ABLG %in% as.vector(sample_ids)) %>%
+  mutate(ABLG = factor(ABLG, levels = as.vector(sample_ids))) %>%
+  arrange(ABLG)
+
+# Import coverage files
+cov <- methRead(
+  location = as.list(file_list),
+  sample.id = as.list(sample_ids),
+  assembly = "SebastesalutusPOP6.ragtag",
+  treatment = rep(0, length(sample_ids)), # treatment = samples$AGE,
+  pipeline = "bismarkCoverage",
+  context = "CpG"
+)
+
+# hi.perc discards bases w/in top 99.9th percentile of coverage in each sample
+filtered.cov <- filterByCoverage(cov,
+                              lo.count=COV, # cov is an arg[1]
+                              lo.perc=NULL,
+                              hi.count=NULL,hi.perc=99.9)
+
+# if there is variable in the depth of coverage, it will remove the bias
+norm.cov <- normalizeCoverage(filtered.cov)
+
+# this part is crashing. haven't gotten through it
+meth <- methylKit::unite(norm.cov, min.per.group = 1L, destrand=FALSE)
+head(meth)
+
+# sample clustering
+clusterSamples(meth, dist="correlation", method="ward", plot=TRUE)
+ggsave("rdata/clusterplot1.jpeg")
+
+diffMeth <- calculateDiffMeth(meth)
+
+diffMeth25p <- getMethylDiff(diffMeth,difference=25,qvalue=0.01)
+
+print("Diff meth per chr:")
+diffMethPerChr(diffMeth25p,plot=FALSE,qvalue.cutoff=0.01, meth.cutoff=25)
+```
+
+I am running into issues with methylkit::unite because of Out-of-Mem, running on himem node.
+
+##### SNP Variant Calling 
 
 attempt with [BSSnper](https://github.com/hellbelly/BS-Snper)
 
@@ -802,13 +907,11 @@ perl ${PROJDIR}/BS-Snper-master/BS-Snper.pl ${snp_folder}/BSSnper_merged.dedupli
 echo "finished perl script"
 ```
 
-Analyses continue in `filtered-bed-to-clock.Rmd` but aren't developed just yet.
-
 ```{r}
 knitr::knit_exit()
 ```
 
-## Step 2. Convert Output to Beta Values
+## Gemini
 
 Beta: Proportion of methylated cytosines at a given genomic position:
 
