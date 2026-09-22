@@ -1,13 +1,7 @@
----
-title: "Pacific Ocean Perch Epigenetic Ageing"
-author: "Natasha Howe & Diana Baetscher"
-date: "`r Sys.Date()`"
-output: github_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+Pacific Ocean Perch Epigenetic Ageing
+================
+Natasha Howe & Diana Baetscher
+2026-09-21
 
 # Pacific Ocean Perch Epigenetic Aging
 
@@ -15,77 +9,97 @@ knitr::opts_chunk$set(echo = TRUE)
 
 NOAA Website Info:
 
-Structure: POP have four genetic types that are present in different proportions across their range. The samples used here also have lcWGS data.
+Structure: POP have four genetic types that are present in different
+proportions across their range. The samples used here also have lcWGS
+data.
 
-Habitat: Generally found hear structured habitats that include rocky outcrops, boulder fields, and deep-water sponges and corals.
+Habitat: Generally found hear structured habitats that include rocky
+outcrops, boulder fields, and deep-water sponges and corals.
 
-Age Structure: Slow-growing & low mortality, reach maturity at \~10 years, and have a maximum age of 98 years.
+Age Structure: Slow-growing & low mortality, reach maturity at ~10
+years, and have a maximum age of 98 years.
 
 Love et al 2002:
 
--   Distribution: Japan, Bering Sea, Aleutian Islands, down to cenral Baja, but common from NorCal to northern Kuril Islands, abundant in GOA (3/4 of all rockfish biomass!)
+- Distribution: Japan, Bering Sea, Aleutian Islands, down to cenral
+  Baja, but common from NorCal to northern Kuril Islands, abundant in
+  GOA (3/4 of all rockfish biomass!)
 
--   Habitat: juveniles live in shallow (37m) waters and move deeper with age (adults \~90m-825m), and live in the \~200ms in the summer and \>300m in winter.
+- Habitat: juveniles live in shallow (37m) waters and move deeper with
+  age (adults ~90m-825m), and live in the ~200ms in the summer and
+  \>300m in winter.
 
--   Vivoparous –\> insemination in early fall, fertilized in late fall, larvae release from Jan to July, juveniles might not be seen until 1.5yr
+- Vivoparous –\> insemination in early fall, fertilized in late fall,
+  larvae release from Jan to July, juveniles might not be seen until
+  1.5yr
 
--   Age: live up at at least 100 yrs
+- Age: live up at at least 100 yrs
 
-    -   90% max size reached at \~20 yrs
+  - 90% max size reached at ~20 yrs
 
-    -   Faster growth is inversely related to lifespan
+  - Faster growth is inversely related to lifespan
 
-    -   size at maturity varies with latitude
+  - size at maturity varies with latitude
 
--   Fishery: declined to 2-5% of peak catch from the 60s to the 70s (peak catch in GOA \~300k tons/yr, BC \~ 60k)
+- Fishery: declined to 2-5% of peak catch from the 60s to the 70s (peak
+  catch in GOA ~300k tons/yr, BC ~ 60k)
 
-    -   Mostly caught in bottom trawl
+  - Mostly caught in bottom trawl
 
-    -   Recent (as of 2002) catches were at \< 5k tons/yr in GOA & BC, and were depressed in PNW
+  - Recent (as of 2002) catches were at \< 5k tons/yr in GOA & BC, and
+    were depressed in PNW
 
-    -   Expect that some of their habitat has been taken over by other rockfishes and pollock, and therefore recovery is not as feasible
+  - Expect that some of their habitat has been taken over by other
+    rockfishes and pollock, and therefore recovery is not as feasible
 
 Palof et al 2010:
 
--   identified a genetic break east and west of Yakutat
+- identified a genetic break east and west of Yakutat
 
 Maselko et al 2020:
 
--   Identified 4 genetic groups of POP across Alaska and BC with spatial overlap
+- Identified 4 genetic groups of POP across Alaska and BC with spatial
+  overlap
 
-Diana Baetscher & Laura Timm's work: [Google slides](https://docs.google.com/presentation/d/1q9sZIl47SLCCVoj1zYx-AqXXnpYGJJqEnLNOL_0fCss/edit?slide=id.g288472996d2_2_0#slide=id.g288472996d2_2_0)
+Diana Baetscher & Laura Timm’s work: [Google
+slides](https://docs.google.com/presentation/d/1q9sZIl47SLCCVoj1zYx-AqXXnpYGJJqEnLNOL_0fCss/edit?slide=id.g288472996d2_2_0#slide=id.g288472996d2_2_0)
 
--   Four genetic groups remain in PCAs
+- Four genetic groups remain in PCAs
 
--   Potentially 4 subgroups in the most divergent group (group B)
+- Potentially 4 subgroups in the most divergent group (group B)
 
--   Mixing zone in the central GOA
+- Mixing zone in the central GOA
 
-    -   group C is largely in central GOA
+  - group C is largely in central GOA
 
-    -   group A is mostly wGOA, bering, Aleutians
+  - group A is mostly wGOA, bering, Aleutians
 
-    -   group B is mostly aleutians and west/central GOA
+  - group B is mostly aleutians and west/central GOA
 
-    -   Interesting, each specific haul was primarily made of 1 genetic group
+  - Interesting, each specific haul was primarily made of 1 genetic
+    group
 
-    -   Suspected hybridization between groups A and D (potentially microgeographic separation or habitat segregation?)
+  - Suspected hybridization between groups A and D (potentially
+    microgeographic separation or habitat segregation?)
 
--   Preliminary morphological analyses suggest smaller eyes are associated with group D
+- Preliminary morphological analyses suggest smaller eyes are associated
+  with group D
 
 Conversation with Owens Lab at UVic:
 
--   Kinga
+- Kinga
 
 ## EM-Seq
 
-[NEBNext Enzymatic Methyl-seq](https://www.neb.com/-/media/nebus/files/manuals/manuale7120.pdf?rev=d97cde7c2d1f448f83efb3e1e4284327&hash=A5C0A358793225CBF106A4897EFD0FD8) Info
+[NEBNext Enzymatic
+Methyl-seq](https://www.neb.com/-/media/nebus/files/manuals/manuale7120.pdf?rev=d97cde7c2d1f448f83efb3e1e4284327&hash=A5C0A358793225CBF106A4897EFD0FD8)
+Info
 
 Sequenced at SeqMatic
 
 48 samples were paired-end sequenced.
 
-```{r, warning=F, message=F}
+``` r
 library(tidyverse)
 library(readxl)
 library(readr)
@@ -99,35 +113,53 @@ ablgs <- read_delim("metadata_files/fastq_md5.txt",delim = "  ", col_names = F,
 nrow(ablgs)
 ```
 
-There are multiple fastqs for each forward and reverse, so they will need to be concatenated.
+    ## [1] 48
 
-Greg Owens uses the [methylseq pipeline](https://nf-co.re/methylseq/4.2.0), shown below, which uses the nextflow workflow management, but I believe that nf-core is a simplification of original nextflow.
+There are multiple fastqs for each forward and reverse, so they will
+need to be concatenated.
+
+Greg Owens uses the [methylseq
+pipeline](https://nf-co.re/methylseq/4.2.0), shown below, which uses the
+nextflow workflow management, but I believe that nf-core is a
+simplification of original nextflow.
 
 [![em-seq-workflow](figures/methylseq-workflow.png)](https://nf-co.re/methylseq/4.2.0)
 
-Diana shared the POP genome with Sai at SeqMatic, and they are working through Bismark.
+Diana shared the POP genome with Sai at SeqMatic, and they are working
+through Bismark.
 
 What reference genome are we using?
 
-Ragtag POP genome from Nicolas Lou: `SebastesalutusPOP6.ragtag.scaffold.fasta`
+Ragtag POP genome from Nicolas Lou:
+`SebastesalutusPOP6.ragtag.scaffold.fasta`
 
 Kinga aligned to each species genome and all to boccacio
 
 ### Metadata
 
-```{r}
+``` r
 metadata <- read_csv("csv_outputs/POP_samples_for_seqmatic_20260420.csv", col_names = T, show_col_types = F)
 
 # this will just confirm that the fastq names match that of the selected metadata 
 metadata <- inner_join(metadata, ablgs)
+```
 
+    ## Joining with `by = join_by(ABLG)`
+
+``` r
 nrow(metadata)
+```
+
+    ## [1] 48
+
+``` r
 # perfect, matches # of expected samples
 ```
 
-We have the haul data with sex and weight/length. I don't think haul data actually helps
+We have the haul data with sex and weight/length. I don’t think haul
+data actually helps
 
-```{r}
+``` r
 ### Call in datasheets 
 
 # --- old
@@ -156,49 +188,66 @@ samplemeta <- selected_samples %>%
   left_join(., other_samples, c='SPECIMENID') %>%
   left_join(., exports, c='ABLG') %>%
   mutate(Sex = case_when(SEX==1 ~ "male", SEX==2 ~ "female", TRUE ~ NA_character_))
+```
 
+    ## Joining with `by = join_by(SPECIMENID)`
+    ## Joining with `by = join_by(ABLG)`
+
+``` r
 samplemeta %>%
   select(ABLG, SPECIMENID, AgeYRS, Sex, LENGTH, WEIGHT, everything()) %>%
   write_tsv(., "csv_outputs/POP_epigenetic_samples_metadata_AgeSex_20260729.tsv")
 ```
 
-```{r age-distributions}
+``` r
 ggplot()+
   geom_histogram(data=samplemeta, aes(x=AgeYRS,fill=Sex), binwidth=1) +
   ggtitle(paste("Avg Age =",round(mean(metadata$AgeYRS),digits=1),"yrs"))+
   theme_bw() +
   theme(legend.position = c(0.9,0.8))
+```
 
+![](alutus_em-seq_aging_sedna_files/figure-gfm/age-distributions-1.png)<!-- -->
+
+``` r
 samplemeta %>% 
   count(Sex)
 ```
 
+    ## # A tibble: 2 × 2
+    ##   Sex        n
+    ##   <chr>  <int>
+    ## 1 female    23
+    ## 2 male      25
+
 Some notes from our meeting on 06/03/2026
 
--   Consider the value of just POP epigenetic clock vs. across many rockfish species
+- Consider the value of just POP epigenetic clock vs. across many
+  rockfish species
 
-    -   Depending on Greg Owens progress and data sharing, could we create a clock that we can validate across the other three species included in their study (bocaccio, yelloweye, blackspotted)
+  - Depending on Greg Owens progress and data sharing, could we create a
+    clock that we can validate across the other three species included
+    in their study (bocaccio, yelloweye, blackspotted)
 
-    -   Should we incorporate northern rockfish in sooner or later (e.g. before or after panel development)?
+  - Should we incorporate northern rockfish in sooner or later
+    (e.g. before or after panel development)?
 
 METHYLSEQ
 
-Let's get it set up on sedna head node
+Let’s get it set up on sedna head node
 
-```{bash headnode, eval=F}
+``` bash
 mamba activate singularity-3.8.6
 mamba activate --stack nextflow-24.04.4
 ```
 
 Set up the input sample sheet in this format:
 
-```         
-sample,fastq_1,fastq_2
-```
+    sample,fastq_1,fastq_2
 
 Each sample is on two lanes, so I need to concatenate them.
 
-```{bash, eval=F}
+``` bash
 cd /scratch2/nhowe/epi-pop/scripts
 
 ls ../fastq/*R1*gz | cut -d"_" -f1 | uniq > pop-epi-samplenames.txt
@@ -206,7 +255,7 @@ ls ../fastq/*R1*gz | cut -d"_" -f1 | uniq > pop-epi-samplenames.txt
 mkdir /scratch2/nhowe/epi-pop/fastq/concat
 ```
 
-```{bash sample-sheet-creation, eval=F}
+``` bash
 cd /scratch2/nhowe/epi-pop/fastq/concat
 
 ls $PWD/*R1*gz > tmp_R1.txt
@@ -228,7 +277,7 @@ this pipeline indexes the genome
 
 Run in `/scratch2/nhowe/epi-pop/scripts/methylseq_test.sh`
 
-```{bash, eval=F}
+``` bash
 # test on 2 samples
 head -n 3 pop-epigenetics-samplesheet.csv > pop-epigenetics-samplesheet_TEST.csv
 
@@ -242,13 +291,18 @@ nextflow run nf-core/methylseq \
   -profile test,singularity # change to singularity after testing?
 ```
 
-I kept getting errors after the first run timed out.... Try this instead: <https://github.com/nf-core/configs>
+I kept getting errors after the first run timed out…. Try this instead:
+<https://github.com/nf-core/configs>
 
-downloading locally to prevent it trying to connect did not work... I think there was an issue with the hidden nextflow files stored in home/nhowe.
+downloading locally to prevent it trying to connect did not work… I
+think there was an issue with the hidden nextflow files stored in
+home/nhowe.
 
-It seems I shouldn't delete those in general, but I did this time and reran, and there was some success after also including a custom config... which I have in the scripts folder
+It seems I shouldn’t delete those in general, but I did this time and
+reran, and there was some success after also including a custom config…
+which I have in the scripts folder
 
-```{bash, eval=F}
+``` bash
 cd /scratch2/nhowe/epi-pop/scripts
 
 # note that /scratch2/nhowe/epi-pop/methylseq exists
@@ -265,19 +319,22 @@ nextflow run nf-core/methylseq -profile singularity -c custom.config --input ../
 
 Thoughts:
 
--   Should I get the polymorphic files from the previous POP work and make sure the CpG sites are not polymorphic?
+- Should I get the polymorphic files from the previous POP work and make
+  sure the CpG sites are not polymorphic?
 
 Full run? started at end of day 7/23/2026
 
-```{bash, eval=F}
+``` bash
 cd /scratch2/nhowe/epi-pop/methylseq_fulldataset
 
 nextflow run nf-core/methylseq -profile singularity -c 20260723.config --input ../pop-epigenetics-samplesheet.csv --outdir ./results
 ```
 
-Dang! I didn't see the note to not use the config file for parameters... this run was cancelled due to lack of space. So i think I'll just have to start from scratch again.
+Dang! I didn’t see the note to not use the config file for parameters…
+this run was cancelled due to lack of space. So i think I’ll just have
+to start from scratch again.
 
-```{bash, eval=F}
+``` bash
 cd /scratch2/nhowe/epi-pop/methylseq2
 
 # add yaml with parameters, or just try to run it within the command line?
@@ -288,16 +345,16 @@ nextflow run nf-core/methylseq -profile singularity -c 20260724.config --input .
 
 ## Use produced Bam files - Seqmatic
 
-Diana asked if the Bismark bams had unmapped reads. I can check that myself with:
+Diana asked if the Bismark bams had unmapped reads. I can check that
+myself with:
 
-```{bash, eval=F}
+``` bash
 samtools view -c -f 4 input.bam
 ```
 
-
 ### Step1: Prepare genome
 
-```{bash in-srun1, eval=F}
+``` bash
 module load aligners/bowtie2/2.5.4 bio/bismark/0.24.0
 
 bismark_genome_preparation ~/reference_genomes/sebastes_alutus/
@@ -305,7 +362,7 @@ bismark_genome_preparation ~/reference_genomes/sebastes_alutus/
 
 Step 2. Deduplicate
 
-```{bash bismarkBAM_dedup.sh, eval=F}
+``` bash
 #SBATCH --job-name=methyldedup
 #SBATCH --cpus-per-task=4
 #SBATCH --output=/scratch2/nhowe/epi-pop/fromBAMs/job_outfiles/bismark_dedup_%A-%a.out
@@ -345,17 +402,19 @@ if [ -f "${PROJDIR}/dedup/${sortedbam}.deduplicated.bam"]; then
 fi
 ```
 
-Then I need to move then to share to make space and then I can rename the bamfile with
+Then I need to move then to share to make space and then I can rename
+the bamfile with
 
-```{bash, eval=F}
+``` bash
 sed 's!.bam!_sorted.deduplicated.bam!g' epi-pop_seqmaticBAMs.txt > epi-pop_sort_dedup_bams_input.txt
 ```
 
-Now I can calculate the conversion efficiency with the deduplicated results.
+Now I can calculate the conversion efficiency with the deduplicated
+results.
 
 First create a function to deal with the clunky output
 
-```{r}
+``` r
 # function that takes values from appropriate rows in dedup splitting report
 methyl_conversion <- function(file_path) {
   splitting_report <- read_file(file_path)
@@ -372,33 +431,46 @@ methyl_conversion <- function(file_path) {
 }
 ```
 
-Now implement the function for the deduplicated splitting report files that were moved locally.
+Now implement the function for the deduplicated splitting report files
+that were moved locally.
 
-```{r}
+``` r
 dedup_effic_files <- list.files("../data/bismark",
                                 pattern = "deduplicated_splitting_report.txt",
                                 full.names = TRUE)
 length(dedup_effic_files)
+```
 
+    ## [1] 48
+
+``` r
 conversion_df <- map_df(dedup_effic_files, methyl_conversion)
 
 print(str_c("Mean conversion efficiency across all samples after deduplication: ",
             round(mean(conversion_df$efficiency),2),"%"))
 ```
 
+    ## [1] "Mean conversion efficiency across all samples after deduplication: 99.43%"
+
 ### Step 3. Bismark methylation extractor
 
 additional parameters to consider:
 
---no_overlap (on by default): extract meth calls of overlapping parts in the middle of paired-end reads only once
+–no_overlap (on by default): extract meth calls of overlapping parts in
+the middle of paired-end reads only once
 
---directional (on by default): only report alignments to the top strand (and it's complement)
+–directional (on by default): only report alignments to the top strand
+(and it’s complement)
 
---gzip
+–gzip
 
-Since they didn't seem to do any hard clipping, let's do that here, specifically after looking at some of the M-bias plots that were included in the seqmatic provided files. Also, the Bismark [webpage](https://felixkrueger.github.io/Bismark/usage/library-types/) specifies ignore recommendations of 10bp on both ends.
+Since they didn’t seem to do any hard clipping, let’s do that here,
+specifically after looking at some of the M-bias plots that were
+included in the seqmatic provided files. Also, the Bismark
+[webpage](https://felixkrueger.github.io/Bismark/usage/library-types/)
+specifies ignore recommendations of 10bp on both ends.
 
-```{bash bismarkBAM_methyl.sh, eval=F}
+``` bash
 #SBATCH --job-name=methylextract
 #SBATCH --cpus-per-task=10
 #SBATCH --output=/scratch2/nhowe/epi-pop/fromBAMs/job_outfiles/bismark_methylextract_%A-%a.out
@@ -439,18 +511,19 @@ echo "-- methylation extraction done for ${bam}"
 
 Output files: strand specific output with the following abbreviations
 
-```         
-OT    –  original top strand
-CTOT  –  complementary to original top strand
-OB    –  original bottom strand
-CTOB  –  complementary to original bottom strand
-```
+    OT    –  original top strand
+    CTOT  –  complementary to original top strand
+    OB    –  original bottom strand
+    CTOB  –  complementary to original bottom strand
 
 So this should produce counts, bedGraph, cytosine report
 
-This is to output the merged CpG sites into a \*.cytosine_context_summary.txt file per sample. The original \*cov.gz file from the methylation command are not merged, and therefore each strand has it's own separate row.
+This is to output the merged CpG sites into a
+\*.cytosine_context_summary.txt file per sample. The original \*cov.gz
+file from the methylation command are not merged, and therefore each
+strand has it’s own separate row.
 
-```{bash bismarkBAM_cov2cyt.sh, eval=F}
+``` bash
 #!/bin/bash
 
 #SBATCH --job-name=cov2cyt
@@ -492,12 +565,13 @@ echo "-- coverage to cytosine conversion done for ${filename}: Check for failure
 
 ### Step 3: Filtering sites
 
-I did not do the epidiverse nextflow pipeline for identifying and removing snps... is that something we would want to come back to?
-BSSnper instead? some notes below
+I did not do the epidiverse nextflow pipeline for identifying and
+removing snps… is that something we would want to come back to? BSSnper
+instead? some notes below
 
 #### 20x coverage filtering
 
-```{bash bismarkBAM_filter_coverage20x.sh, eval=F}
+``` bash
 #!/bin/bash
 
 #SBATCH --job-name=filter_cov
@@ -544,9 +618,11 @@ echo "-- filtered sorted file by coverage for ${filename}: Check for failures in
 
 #### Number of samples with 20x
 
-Keep sites with \>90% samples with 20x coverage, which I upped from the 80% used in Anastasia because they have more samples. Emma strand also uses 90%.
+Keep sites with \>90% samples with 20x coverage, which I upped from the
+80% used in Anastasia because they have more samples. Emma strand also
+uses 90%.
 
-```{bash bismarkBAM_multiIntersectBed.sh, eval=F}
+``` bash
 #!/bin/bash
 
 #SBATCH --job-name=ind_filter1
@@ -602,9 +678,10 @@ echo "-- Files output for 100% combined bed."
 
 1,560,859 sites with 100% of samples represented at 20x
 
-Now filter the individual sample files to the selected sites, again based on Emma strand code.
+Now filter the individual sample files to the selected sites, again
+based on Emma strand code.
 
-```{bash bismarkBAM_filter_nind_90-100p-20x.sh, eval=F}
+``` bash
 #!/bin/bash
 
 #SBATCH --job-name=bedintersect_nind
@@ -643,9 +720,10 @@ bedtools intersect -a ${tabfile} -b ${OUTDIR}"/CpG.100perc."${THRESHOLD}"x.sort.
 echo "---- Finished: Clip ${tabfile} by sites selected in 90/100 percent bedfile."
 ```
 
-Check these values after filtering... because we have such a small \# of samples, maybe the sample % should be 100.
+Check these values after filtering… because we have such a small \# of
+samples, maybe the sample % should be 100.
 
-```{bash execute_bed-to-rdata.sh, eval=F}
+``` bash
 #!/bin/bash
 
 #SBATCH --job-name=methyl_rds
@@ -667,15 +745,17 @@ mkdir -p "/home/nhowe/epi-pop/Rmd/rdata"
 Rscript --vanilla /home/nhowe/epi-pop/Rmd/methylation_bed-to-rdata_args.R ${COVTHRESHOLD} ${INDPERC}
 ```
 
-I thought I was going to be able to easily import the rdata and work with it, but its massive.. might just stick with r scripts in sedna.
+I thought I was going to be able to easily import the rdata and work
+with it, but its massive.. might just stick with r scripts in sedna.
 
-#### SNP filtering 
+#### SNP filtering
 
 attempt with [BSSnper](https://github.com/hellbelly/BS-Snper)
 
-reran with this additional script because of coordinate sorting - bismark deduplicate unsorts the data
+reran with this additional script because of coordinate sorting -
+bismark deduplicate unsorts the data
 
-```{bash BSSnper-00-sort-index-bams.sh, eval=F}
+``` bash
 #!/bin/bash
 
 #SBATCH --job-name=bam_idx
@@ -715,7 +795,7 @@ samtools index ${coordsortbam}
 echo "--- Index done for ${coordsortbam}"
 ```
 
-```{bash BSSnper-01_mergefile.sh, eval=F}
+``` bash
 #!/bin/bash
 
 #SBATCH --time=2-24:00:00
@@ -744,7 +824,7 @@ samtools index ${OUTDIR}/BSSnper_merged.deduplicated.coordsort.bam
 
 This has not successfully been run.
 
-```{bash BSSnper-02_run.sh, eval=F}
+``` bash
 #!/bin/bash
 
 #SBATCH --time=2-24:00:00
@@ -802,124 +882,9 @@ perl ${PROJDIR}/BS-Snper-master/BS-Snper.pl ${snp_folder}/BSSnper_merged.dedupli
 echo "finished perl script"
 ```
 
-Analyses continue in `filtered-bed-to-clock.Rmd` but aren't developed just yet.
+Analyses continue in `filtered-bed-to-clock.Rmd` but aren’t developed
+just yet.
 
-```{r}
+``` r
 knitr::knit_exit()
-```
-
-## Step 2. Convert Output to Beta Values
-
-Beta: Proportion of methylated cytosines at a given genomic position:
-
-$$\beta = \frac{\text{Reads with Methylated C}}{\text{Total Reads (Methylated C + Unmethylated T)}}$$
-
-```{r, eval=F, echo = F}
-library(data.table)
-
-# Example using a MethylDackel bedGraph (chr, start, end, meth_pct, count_meth, count_unmeth)
-dt <- fread("sample_meth_CpG.bedGraph", skip = 1)
-colnames(dt) <- c("chr", "start", "end", "beta_percent", "n_meth", "n_unmeth")
-
-# Convert percentage to 0-1 scale and compute coverage
-dt[, coverage := n_meth + n_unmeth]
-dt[, beta := n_meth / coverage]
-
-# Filter for minimum coverage threshold (e.g., >= 10x depth)
-dt_filtered <- dt[coverage >= 10]
-```
-
-
-## Why Elastic Net?
-
-Epigenetic data suffers from the $p \gg n$ problem (high dimensionality), where you have hundreds of thousands (or millions) of CpG sites ($p$), but only dozens or hundreds of samples ($n$). Standard linear regression fails in this setup.
-
-Elastic Net combines two regularization penalties:
-
--   **L1 Regularization (Lasso):** Forces most CpG coefficients to zero, selecting a compact subset of "clock CpGs" (often 100 to 1,000 sites).
-
--   **L2 Regularization (Ridge):** Handles multicollinearity (since nearby CpGs are heavily correlated) by shrinking coefficients together rather than arbitrarily picking just one.
-
-Additional Gemini Question about it:
-
-Elastic Net regression is widely considered the gold standard for constructing epigenetic clocks (such as Horvath’s or Hannum’s clock) because of how it handles the unique, complex nature of DNA methylation dataset structures. In epigenetic clock models, researchers measure DNA methylation levels across hundreds of thousands (or millions) of CpG sites to predict chronological or biological age. This creates specific statistical challenges that Elastic Net is uniquely built to solve.
-
-1\. The $p \gg n$ Problem (High Dimensionality)
-
-The Challenge: Epigenetic datasets typically have measurements for 27,000 to over 850,000 CpG sites ($p$, the predictors), but usually only a few hundred to a few thousand individual human samples ($n$, the observations). Standard Ordinary Least Squares (OLS) regression completely breaks down when $p \gg n$ because there is no unique mathematical solution.
-
-Elastic Net Solution: By adding regularization penalties, Elastic Net constrains the size of the regression coefficients, allowing the model to fit high-dimensional data without overfitting.
-
-2\. High Multicollinearity and the "Grouped Selection" Effect
-
-The Challenge: CpG sites do not act in isolation; neighboring sites or genes in the same biological pathway often turn on or off together. Their methylation levels are strongly correlated with one another.
-
-Lasso (L1 penalty) arbitrarily picks one CpG site from a correlated group and sets the rest to zero, which can discard biologically relevant information and make the clock unstable.
-
-Ridge (L2 penalty) keeps all CpG sites and shrinks their coefficients together, but it fails to eliminate non-essential sites, leaving you with hundreds of thousands of weak predictors.
-
-Elastic Net Solution: It combines both penalties ($\text{L1} + \text{L2}$). The L2 (Ridge) component allows Elastic Net to select or drop entire groups of correlated CpG sites together (the "grouped selection effect"), preserving biological pathway signals.
-
-3\. Feature Selection & Interpretability
-
-The Challenge: Out of 850,000 CpG sites, only a small fraction are actually driving or reflecting systemic aging. Biologists need a sparse set of markers so the clock can be turned into a targeted, practical diagnostic tool.
-
-Elastic Net Solution: The L1 (Lasso) component forces the coefficients of irrelevant or redundant CpG sites to exactly zero. For instance, Steve Horvath used Elastic Net to shrink hundreds of thousands of CpG sites down to just 353 CpG sites for his landmark 2013 pan-tissue age estimator.
-
-## Common Model Variations Across Clocks
-
-While Elastic Net forms the backbone of foundational clocks, models vary based on the specific biological question:
-
-Elastic Net: Predicts continuous age ($y$) directly from CpG beta values ($X$).
-
-Log-Transformed Elastic Net: Applies a non-linear transform to age for young vs. adult organisms: $f(\text{age}) = \log(\text{age} + 1)$.
-
-```{r}
-library(glmnet)
-
-# X = Matrix of CpG Beta values (Samples as rows, CpGs as columns)
-# y = Chronological Age vector
-
-# alpha = 0.5 balances Lasso (1) and Ridge (0)
-# family = "gaussian" for continuous age prediction
-clock_model <- cv.glmnet(
-  x = X_matrix, 
-  y = age_vector, 
-  alpha = 0.5, 
-  family = "gaussian",
-  nfolds = 10
-)
-
-# Extract non-zero CpG coefficients (the selected "clock" CpGs)
-clock_coefficients <- coef(clock_model, s = "lambda.min")
-```
-
-Random thought that was probably in someone's methods. After finding CpG sites, I should BLAST to the korean rockfish (the "better" one)? Or if I can do so with the other ragtag genomes?
-
-##### Random Aside
-
-For running through the false killer whale scripts, and I had to do some searching for the correct packages. I just pasted it here so it is somewhere, and I will see if it actually works.
-
-```{r}
-# this was all in run in R console for the opened r project 
-if (!requireNamespace("renv", quietly=TRUE)) install.packages("renv")
-deps <- renv::dependencies()
-unique(deps$Package)
-r_files <- list.files(pattern = "\\.[Rr]$", recursive = TRUE)
-lines <- unlist(lapply(r_files, readLines))
-matches <- regmatches(lines, gregexpr("[a-zA-Z0-9\\.]+(?=::)", lines, perl = TRUE))
-unique(unlist(matches))
-needed_pkgs <- unique(renv::dependencies()$Package)
-missing <- needed_pkgs[!(needed_pkgs %in% installed.packages()[, "Package"])]
-missing
-install.packages(missing)
-warnings()
-failed_pkgs <- c(
-"spatstat.utils", "gss", "clue", "kknn", "stable",
-"spatstat.data", "spatstat.univar", "fBasics",
-"spatstat.geom", "swfscMisc", "rfPermute"
-)
-install.packages(failed_pkgs, type = "binary")
-
-# this didn't resolve anything bc i think the r code is written for running in parallel on linux
 ```
